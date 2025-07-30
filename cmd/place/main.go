@@ -5,8 +5,10 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	_ "github.com/joho/godotenv/autoload"
+	"github.com/will-x86/r-place/pkg/cache"
 	"github.com/will-x86/r-place/pkg/helper"
 	"github.com/will-x86/r-place/pkg/router"
 	"github.com/will-x86/r-place/pkg/vk"
@@ -17,6 +19,12 @@ func init() {
 	if err := helper.SetMaxXY(); err != nil {
 		panic(err)
 	}
+	start := time.Now()
+	log.Println("Starting initial cache", start.String())
+	if err := cache.InitialCache(); err != nil {
+		panic(err)
+	}
+	log.Println("Finished initial cache, time taken:", time.Since(start).String())
 
 }
 func main() {

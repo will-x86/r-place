@@ -31,12 +31,13 @@ func CloseValkey() {
 
 func SetCanvasValue(ctx context.Context, c models.Canvas) error {
 	// Format is KEY:x-y to VALUE #XXXXXX
+	//cache.SetColor(c.X, c.Y, c.Hex)
 	return client.Do(ctx, client.B().Set().Key(fmt.Sprintf("%d-%d", c.X, c.Y)).Value(c.Hex).Nx().Build()).Error()
 }
 
 // Format is KEY:x-y to VALUE #XXXXXX
-func GetSingleCanvasValue(ctx context.Context, key string) (string, error) {
-	res, err := client.Do(ctx, client.B().Get().Key(key).Build()).ToString()
+func GetSingleCanvasValue(ctx context.Context, c models.Canvas) (string, error) {
+	res, err := client.Do(ctx, client.B().Get().Key(fmt.Sprintf("%d-%d", c.X, c.Y)).Build()).ToString()
 	if err != nil {
 		return "", err
 	}

@@ -8,6 +8,7 @@ import (
 	"strconv"
 
 	"github.com/valkey-io/valkey-go"
+	"github.com/will-x86/r-place/pkg/cache"
 	"github.com/will-x86/r-place/pkg/helper"
 	"github.com/will-x86/r-place/pkg/models"
 	"github.com/will-x86/r-place/pkg/vk"
@@ -15,7 +16,9 @@ import (
 
 // Get a value on the canvas
 func GetCanvas(w http.ResponseWriter, r *http.Request) {
-
+	png := cache.GetCachedPng()
+	w.Header().Add("Content-Type", "image/png")
+	w.Write(png)
 }
 
 // Set a value on the canvas
@@ -29,6 +32,8 @@ func SetCanvas(w http.ResponseWriter, r *http.Request) {
 		helper.ReturnJsonError(w, fmt.Errorf("Error setting database %w", err), http.StatusInternalServerError)
 		return
 	}
+	cache.SetColor(c.X, c.Y, c.Hex)
+
 	// Ignoring error, I'll cut my socks off if this errors
 	response, _ := json.Marshal(map[string]any{"ok": "ok"})
 	w.WriteHeader(http.StatusOK)
@@ -72,7 +77,7 @@ func GetSingle(w http.ResponseWriter, r *http.Request) {
 		helper.ReturnJsonError(w, fmt.Errorf("Invalid X-Y co-ords. Max X= %d Max y= %d", maxX, maxY), http.StatusBadRequest)
 		return
 	}
-	hex, err := vk.GetSingleCanvasValue(r.Context(), fmt.Sprintf("%d-%d", c.X, c.Y))
+	hex, err := vk.GetSingleCanvasValue(r.Context(), c)
 	if err != nil {
 		// If there's no value set, we set it to white
 		if valkey.IsValkeyNil(err) {
