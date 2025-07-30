@@ -1,0 +1,28 @@
+---
+services:
+  valkey:
+    image: valkey/valkey:latest
+    command: valkey-server --port 6379 --requirepass ${VALKEY_PASSWORD} --appendonly
+      yes ${IO_THREADS}
+    volumes: [./valkey-data:/data]
+    restart: always
+    ports:
+      - 6379:6379
+    # network_mode: host
+    networks: [valkey-net]
+  insight:
+    image: redis/redisinsight:latest
+    container_name: valkey_gui
+    ports: [5540:5540]
+    restart: always
+    depends_on:
+      - valkey  # Ensures Valkey starts before the GUI
+    networks: [valkey-net]
+    volumes: [insight-storage:/data]
+volumes:
+  data:
+    driver: local
+  insight-storage:
+networks:
+  valkey-net:
+    driver: bridge
