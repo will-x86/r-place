@@ -5,32 +5,21 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strconv"
 
 	_ "github.com/joho/godotenv/autoload"
+	"github.com/will-x86/r-place/pkg/helper"
 	"github.com/will-x86/r-place/pkg/router"
 	"github.com/will-x86/r-place/pkg/vk"
 )
 
-var XMAX int
-var YMAX int
-
 func init() {
 	vk.InitialiseValkey()
-	var err error
-	XMAX, err = strconv.Atoi(os.Getenv("X_MAX"))
-	if err != nil {
-		panic(err)
-	}
-	YMAX, err = strconv.Atoi(os.Getenv("Y_MAX"))
-
-	if err != nil {
+	if err := helper.SetMaxXY(); err != nil {
 		panic(err)
 	}
 
 }
 func main() {
-	for k,v := range 
 	defer vk.CloseValkey()
 	/*
 		Important for "mission critical" golang programs, if the program panics, start again.

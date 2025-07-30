@@ -29,3 +29,4 @@ ui/vite.config.ts.timestamp-*
 
 .env
 
+tmp

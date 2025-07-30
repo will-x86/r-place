@@ -29,6 +29,7 @@
             gopkgs
             godef
             golint
+            air # Hot reloading with golang woot woot 
           ];
 
           shellHook = ''
