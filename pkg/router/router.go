@@ -50,8 +50,9 @@ func NewRouter() *chi.Mux {
 		r.Group(func(r chi.Router) {
 			r.Use(httprate.LimitByIP(10, time.Minute)) // Limit to 10 requests per miniute within this group
 			// Set a single pixel
-			r.Post("/pixels", canvas.SetCanvas)
 		})
+		// Move to not this lol
+		r.Post("/pixels", canvas.SetCanvas)
 		r.Get("/canvas", canvas.GetCanvas)
 		r.Post("/pixel", canvas.GetSingle)
 	})
