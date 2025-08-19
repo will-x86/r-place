@@ -23,6 +23,9 @@ var (
 	can           *PixelCanvas
 	cachedPng     []byte
 	pngCacheMutex sync.RWMutex
+	pngUpdateCh   chan struct{}
+	dirtyFlag     bool
+	dirtyMutex    sync.RWMutex
 )
 
 type PixelCanvas struct {
@@ -33,25 +36,42 @@ type PixelCanvas struct {
 func (pc *PixelCanvas) updatePngCache() {
 	startTime := time.Now()
 	buf := new(bytes.Buffer)
-	if err := png.Encode(buf, pc.img); err != nil {
+
+	// Use best compression for smaller file size
+	encoder := &png.Encoder{CompressionLevel: png.BestCompression}
+	if err := encoder.Encode(buf, pc.img); err != nil {
 		panic(fmt.Sprintf("failed to encode png: %v", err))
 	}
 
 	pngCacheMutex.Lock()
 	cachedPng = buf.Bytes()
 	pngCacheMutex.Unlock()
-	log.Println("Time to re-encode png:",time.Since(startTime).String())
+	log.Println("Time to re-encode png:", time.Since(startTime).String())
+}
+
+func markDirty() {
+	dirtyMutex.Lock()
+	if !dirtyFlag {
+		dirtyFlag = true
+		select {
+		case pngUpdateCh <- struct{}{}:
+		default:
+		}
+	}
+	dirtyMutex.Unlock()
+}
+
+func clearDirty() {
+	dirtyMutex.Lock()
+	dirtyFlag = false
+	dirtyMutex.Unlock()
 }
 
 func GetCachedPng() []byte {
 	pngCacheMutex.RLock()
 	defer pngCacheMutex.RUnlock()
-	if cachedPng == nil {
-		return nil
-	}
-	data := make([]byte, len(cachedPng))
-	copy(data, cachedPng)
-	return data
+	// Return direct reference since it's read-only after creation
+	return cachedPng
 }
 
 func ParseHexColor(s string) (c color.RGBA, err error) {
@@ -82,17 +102,17 @@ func SetColor(x, y int, hex string) error {
 
 func (pc *PixelCanvas) SetColor(x, y int, color color.RGBA) {
 	pc.mutex.Lock()
-	defer pc.mutex.Unlock()
 	pc.img.Set(x, y, color)
-	pc.updatePngCache()
+	pc.mutex.Unlock()
+	markDirty()
 }
 
 func (pc *PixelCanvas) SetPixel(x, y int, r, g, b, a uint8) {
 	pc.mutex.Lock()
-	defer pc.mutex.Unlock()
 	c := color.RGBA{r, g, b, a}
 	pc.img.Set(x, y, c)
-	pc.updatePngCache()
+	pc.mutex.Unlock()
+	markDirty()
 }
 
 func InitialCache() error {
@@ -166,8 +186,33 @@ func InitialCache() error {
 	can.mutex.Lock()
 	defer can.mutex.Unlock()
 	can.updatePngCache()
-
+	startPngUpdateWorker()
 	return nil
+}
+
+func startPngUpdateWorker() {
+	pngUpdateCh = make(chan struct{}, 1)
+	go func() {
+		ticker := time.NewTicker(2 * time.Second)
+		defer ticker.Stop()
+
+		for {
+			select {
+			case <-ticker.C:
+				dirtyMutex.RLock()
+				if dirtyFlag {
+					dirtyMutex.RUnlock()
+					can.mutex.Lock()
+					can.updatePngCache()
+					can.mutex.Unlock()
+					clearDirty()
+				} else {
+					dirtyMutex.RUnlock()
+				}
+			case <-pngUpdateCh:
+			}
+		}
+	}()
 }
 
 func NewPixelCanvas(width, height int) *PixelCanvas {
