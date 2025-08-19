@@ -18,7 +18,7 @@
 		if (!ctx) return;
 
 		const backgroundImage = new Image();
-		backgroundImage.src = '/api/canvas';
+		backgroundImage.src = import.meta.env.VITE_API_URL + '/api/canvas';
 		backgroundImage.onload = () => {
 			ctx.drawImage(backgroundImage, 0, 0);
 		};

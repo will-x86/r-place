@@ -2,8 +2,7 @@
 services:
   valkey:
     image: valkey/valkey:latest
-    command: valkey-server --port 6379 --requirepass ${VALKEY_PASSWORD} --appendonly
-      yes ${IO_THREADS}
+    command: valkey-server --port 6379 --requirepass ${VALKEY_PASSWORD} --appendonly yes --io-threads ${IO_THREADS}
     volumes: [./valkey-data:/data]
     restart: always
     ports:

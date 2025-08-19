@@ -17,6 +17,7 @@ func InitialiseValkey() error {
 	if err != nil {
 		return err
 	}
+
 	/*
 		ctx := context.Background()
 		SET key val NX
