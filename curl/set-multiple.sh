@@ -15,7 +15,7 @@ while read -r x y hex; do
   curl -s -X POST \
     -H "Content-Type: application/json" \
     -d "{\"x\":$x, \"y\":$y, \"hex\":\"$hex\"}" \
-    "$API_URL" &
+    "$API_URL" > /dev/null &
 done
 
 wait

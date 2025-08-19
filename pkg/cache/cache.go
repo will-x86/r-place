@@ -186,8 +186,11 @@ func InitialCache() error {
 	can.mutex.Lock()
 	defer can.mutex.Unlock()
 	can.updatePngCache()
-	startPngUpdateWorker()
 	return nil
+}
+
+func StartPngUpdateWorker() {
+	startPngUpdateWorker()
 }
 
 func startPngUpdateWorker() {

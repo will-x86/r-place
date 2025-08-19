@@ -33,7 +33,7 @@ func CloseValkey() {
 func SetCanvasValue(ctx context.Context, c models.Canvas) error {
 	// Format is KEY:x-y to VALUE #XXXXXX
 	//cache.SetColor(c.X, c.Y, c.Hex)
-	return client.Do(ctx, client.B().Set().Key(fmt.Sprintf("%d-%d", c.X, c.Y)).Value(c.Hex).Nx().Build()).Error()
+	return client.Do(ctx, client.B().Set().Key(fmt.Sprintf("%d-%d", c.X, c.Y)).Value(c.Hex).Build()).Error()
 }
 
 // Format is KEY:x-y to VALUE #XXXXXX

@@ -28,6 +28,7 @@ func init() {
 		panic(err)
 	}
 	log.Println("Finished initial cache, time taken:", time.Since(start).String())
+	cache.StartPngUpdateWorker()
 
 }
 func main() {

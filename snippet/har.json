@@ -1,0 +1,27 @@
+{
+  "method": "POST",
+  "url": "http://localhost:8081/api/pixels",
+  "httpVersion": "HTTP/1.1",
+  "headers": [
+    {
+      "name": "Content-Type",
+      "value": "application/json"
+    },
+    {
+      "name": "User-Agent",
+      "value": "curl/7.68.0"
+    },
+    {
+      "name": "Accept",
+      "value": "*/*"
+    }
+  ],
+  "queryString": [],
+  "postData": {
+    "mimeType": "application/json",
+    "text": "{\"x\":1, \"y\":2, \"hex\":\"#102932\"}"
+  },
+  "headersSize": -1,
+  "bodySize": 32,
+  "cookies": []
+}
