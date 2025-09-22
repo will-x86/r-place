@@ -21,7 +21,7 @@
 
 		statusMessage = `Deleting section...`;
 		try {
-			const res = await fetch(import.meta.env.VITE_API_URL + '/api/admin/section', {
+			const res = await fetch((import.meta.env.VITE_API_URL || '') + '/api/admin/section', {
 				method: 'DELETE',
 				headers: {
 					'Content-Type': 'application/json',

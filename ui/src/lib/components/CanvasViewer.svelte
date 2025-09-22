@@ -52,7 +52,7 @@
 		const refreshCanvas = () => {
 			const img = new Image();
 			img.crossOrigin = 'Anonymous';
-			img.src = import.meta.env.VITE_API_URL + `/api/canvas?t=${Date.now()}`;
+			img.src = (import.meta.env.VITE_API_URL||'') + `/api/canvas?t=${Date.now()}`;
 
 			img.onload = () => {
 				const hasSizeChanged =
