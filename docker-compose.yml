@@ -3,7 +3,7 @@ services:
   valkey:
     image: valkey/valkey:latest
     command: valkey-server --port 6379 --requirepass ${VALKEY_PASSWORD} --appendonly yes --appendfsync everysec --save 900 1 --save 300 10 --save 60 10000 --io-threads ${IO_THREADS} --maxmemory ${VALKEY_MAX_MEMORY} --maxmemory-policy allkeys-lru
-    volumes: 
+    volumes:
       - valkey-data:/data
     restart: always
     ports:
@@ -16,7 +16,7 @@ services:
     ports: [5540:5540]
     restart: always
     depends_on:
-      - valkey  # Ensures Valkey starts before the GUI
+      - valkey # Ensures Valkey starts before the GUI
     networks: [valkey-net]
     volumes: [insight-storage:/data]
 volumes:
