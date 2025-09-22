@@ -14,6 +14,52 @@ import (
 	"github.com/will-x86/r-place/pkg/vk"
 )
 
+// Delete request for deleting square
+type DeleteRequest struct {
+	X1 int `json:"x1"`
+	Y1 int `json:"y1"`
+	X2 int `json:"x2"`
+	Y2 int `json:"y2"`
+}
+
+func DeleteCanvasSection(w http.ResponseWriter, r *http.Request) {
+	var req DeleteRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		helper.ReturnJsonError(w, fmt.Errorf("invalid json body: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ensure x1 < x2 and y1 < y2
+	if req.X1 > req.X2 {
+		req.X1, req.X2 = req.X2, req.X1
+	}
+	if req.Y1 > req.Y2 {
+		req.Y1, req.Y2 = req.Y2, req.Y1
+	}
+
+	maxX, maxY := helper.GetMaxXY()
+	if req.X1 < 0 || req.Y1 < 0 || req.X2 >= maxX || req.Y2 >= maxY {
+		helper.ReturnJsonError(w, fmt.Errorf("coordinates are out of bounds"), http.StatusBadRequest)
+		return
+	}
+
+	// set each pixel to white
+	for x := req.X1; x <= req.X2; x++ {
+		for y := req.Y1; y <= req.Y2; y++ {
+			pixel := models.Canvas{X: x, Y: y, Hex: "#FFFFFF"}
+			// Set in Valkey
+			if err := vk.SetCanvasValue(r.Context(), pixel); err != nil {
+				// best-effort deletion
+				log.Printf("Error deleting pixel at (%d, %d): %v", x, y, err)
+			}
+			cache.SetColor(pixel.X, pixel.Y, pixel.Hex)
+		}
+	}
+
+	log.Printf("Admin cleared section from (%d, %d) to (%d, %d)", req.X1, req.Y1, req.X2, req.Y2)
+	w.WriteHeader(http.StatusNoContent) // 204 No Content DELETE
+}
+
 // Get a value on the canvas
 func GetCanvas(w http.ResponseWriter, r *http.Request) {
 	png := cache.GetCachedPng()

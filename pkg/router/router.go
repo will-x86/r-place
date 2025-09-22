@@ -16,6 +16,26 @@ import (
 	"github.com/will-x86/r-place/ui"
 )
 
+func APIKeyAuth(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		masterKey := os.Getenv("MASTER_API_KEY")
+		if masterKey == "" {
+			log.Println("FATAL: MASTER_API_KEY environment variable not set.")
+			http.Error(w, "Server Configuration Error", http.StatusInternalServerError)
+			return
+		}
+
+		authHeader := r.Header.Get("Authorization")
+		token := strings.TrimPrefix(authHeader, "Bearer ")
+
+		if token != masterKey {
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
+}
 func NewRouter() *chi.Mux {
 	// Create a new http router
 	r := chi.NewRouter()
@@ -55,6 +75,10 @@ func NewRouter() *chi.Mux {
 		r.Post("/pixels", canvas.SetCanvas)
 		r.Get("/canvas", canvas.GetCanvas)
 		r.Post("/pixel", canvas.GetSingle)
+		r.Route("/admin", func(r chi.Router) {
+			r.Use(APIKeyAuth)
+			r.Delete("/section", canvas.DeleteCanvasSection)
+		})
 	})
 
 	staticFileServer(r)

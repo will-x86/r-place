@@ -5,7 +5,7 @@ if [ -z "$1" ]; then
   exit 1
 fi
 
-API_URL="http://localhost:8081/api/pixels"
+API_URL="http://localhost:9090/api/pixels"
 IMAGE_FILE="$1"
 SIZE="1000x1000"
 
