@@ -1,5 +1,5 @@
 curl --request POST \
-  --url http://localhost:8081/api/pixels \
+  --url https://place.willx86.com/api/pixels \
   --header 'Accept: */*' \
   --header 'Content-Type: application/json' \
   --header 'User-Agent: curl/7.68.0' \

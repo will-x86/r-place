@@ -1,9 +1,12 @@
 require 'uri'
 require 'net/http'
+require 'openssl'
 
-url = URI("http://localhost:8081/api/pixels")
+url = URI("https://place.willx86.com/api/pixels")
 
 http = Net::HTTP.new(url.host, url.port)
+http.use_ssl = true
+http.verify_mode = OpenSSL::SSL::VERIFY_NONE
 
 request = Net::HTTP::Post.new(url)
 request["Content-Type"] = 'application/json'

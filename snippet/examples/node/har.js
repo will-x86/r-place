@@ -1,25 +1,25 @@
-const http = require('http');
+const http = require("https");
 
 const options = {
-  method: 'POST',
-  hostname: 'localhost',
-  port: '8081',
-  path: '/api/pixels',
-  headers: {
-    'Content-Type': 'application/json',
-    'User-Agent': 'curl/7.68.0',
-    Accept: '*/*'
+  "method": "POST",
+  "hostname": "place.willx86.com",
+  "port": null,
+  "path": "/api/pixels",
+  "headers": {
+    "Content-Type": "application/json",
+    "User-Agent": "curl/7.68.0",
+    "Accept": "*/*"
   }
 };
 
 const req = http.request(options, function (res) {
   const chunks = [];
 
-  res.on('data', function (chunk) {
+  res.on("data", function (chunk) {
     chunks.push(chunk);
   });
 
-  res.on('end', function () {
+  res.on("end", function () {
     const body = Buffer.concat(chunks);
     console.log(body.toString());
   });

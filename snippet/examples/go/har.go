@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"strings"
 	"net/http"
-	"io"
+	"io/ioutil"
 )
 
 func main() {
 
-	url := "http://localhost:8081/api/pixels"
+	url := "https://place.willx86.com/api/pixels"
 
 	payload := strings.NewReader("{\"x\":1, \"y\":2, \"hex\":\"#102932\"}")
 
@@ -22,7 +22,7 @@ func main() {
 	res, _ := http.DefaultClient.Do(req)
 
 	defer res.Body.Close()
-	body, _ := io.ReadAll(res.Body)
+	body, _ := ioutil.ReadAll(res.Body)
 
 	fmt.Println(res)
 	fmt.Println(string(body))

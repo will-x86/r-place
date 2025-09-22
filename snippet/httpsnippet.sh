@@ -10,5 +10,5 @@ do
     if [ ! -d "examples/$target" ]; then
         mkdir "examples/$target"
     fi
-    httpsnippet har.json --target "$target" --output "./examples/$target"
+    npx httpsnippet har.json --target "$target" --output "./examples/$target"
 done
