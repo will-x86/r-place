@@ -3,6 +3,8 @@ package canvas
 import (
 	"encoding/json"
 	"fmt"
+	"image"
+	"image/png"
 	"log"
 	"net/http"
 	"strconv"
@@ -138,4 +140,110 @@ func GetSingle(w http.ResponseWriter, r *http.Request) {
 	w.Write(response)
 	log.Printf("Successfully got co-ords X:%d , Y:%d with hex %s\n", c.X, c.Y, hex)
 
+}
+
+type Set10x10ImageRequest struct {
+	X int `json:"x"`
+	Y int `json:"y"`
+}
+
+func Set10x10Image(w http.ResponseWriter, req *http.Request) {
+	err := req.ParseMultipartForm(10 << 20)
+	if err != nil {
+		helper.ReturnJsonError(w, fmt.Errorf("error parsing multipart form: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	xStr := req.FormValue("x")
+	yStr := req.FormValue("y")
+
+	if xStr == "" || yStr == "" {
+		helper.ReturnJsonError(w, fmt.Errorf("x and y coordinates are required"), http.StatusBadRequest)
+		return
+	}
+
+	x, err := strconv.Atoi(xStr)
+	if err != nil {
+		helper.ReturnJsonError(w, fmt.Errorf("invalid x coordinate: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	y, err := strconv.Atoi(yStr)
+	if err != nil {
+		helper.ReturnJsonError(w, fmt.Errorf("invalid y coordinate: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	maxX, maxY := helper.GetMaxXY()
+	if x < 0 || y < 0 || x+10 > maxX || y+10 > maxY {
+		helper.ReturnJsonError(w, fmt.Errorf("10x10 image would extend beyond canvas bounds. Canvas size: %dx%d", maxX, maxY), http.StatusBadRequest)
+		return
+	}
+
+	file, _, err := req.FormFile("image")
+	if err != nil {
+		helper.ReturnJsonError(w, fmt.Errorf("error getting image file: %w", err), http.StatusBadRequest)
+		return
+	}
+	defer file.Close()
+
+	img, err := png.Decode(file)
+	if err != nil {
+		helper.ReturnJsonError(w, fmt.Errorf("error decoding PNG image: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	bounds := img.Bounds()
+	if bounds.Dx() != 10 || bounds.Dy() != 10 {
+		helper.ReturnJsonError(w, fmt.Errorf("image must be exactly 10x10 pixels, got %dx%d", bounds.Dx(), bounds.Dy()), http.StatusBadRequest)
+		return
+	}
+
+	rgba := image.NewRGBA(bounds)
+	for py := bounds.Min.Y; py < bounds.Max.Y; py++ {
+		for px := bounds.Min.X; px < bounds.Max.X; px++ {
+			rgba.Set(px, py, img.At(px, py))
+		}
+	}
+
+	pixelsSet := 0
+	for py := 0; py < 10; py++ {
+		for px := 0; px < 10; px++ {
+			canvasX := x + px
+			canvasY := y + py
+
+			r, g, b, a := rgba.At(px, py).RGBA()
+
+			r8 := uint8(r >> 8)
+			g8 := uint8(g >> 8)
+			b8 := uint8(b >> 8)
+			a8 := uint8(a >> 8)
+
+			hexColor := fmt.Sprintf("#%02x%02x%02x", r8, g8, b8)
+
+			if a8 < 128 {
+				continue
+			}
+
+			pixel := models.Canvas{X: canvasX, Y: canvasY, Hex: hexColor}
+
+			if err := vk.SetCanvasValue(req.Context(), pixel); err != nil {
+				log.Printf("Error setting pixel at (%d, %d): %v", canvasX, canvasY, err)
+				continue
+			}
+
+			cache.SetColor(canvasX, canvasY, hexColor)
+			pixelsSet++
+		}
+	}
+
+	log.Printf("Successfully set %d pixels from 10x10 image at (%d, %d)", pixelsSet, x, y)
+
+	response, _ := json.Marshal(map[string]any{
+		"success":    true,
+		"pixels_set": pixelsSet,
+		"message":    fmt.Sprintf("Set %d pixels from 10x10 image", pixelsSet),
+	})
+	w.WriteHeader(http.StatusOK)
+	w.Write(response)
 }

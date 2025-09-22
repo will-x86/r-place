@@ -1,0 +1,41 @@
+{
+  "log": {
+    "version": "1.2",
+    "creator": {
+      "name": "Script",
+      "version": "1.0"
+    },
+    "entries": [
+      {
+        "request": {
+          "method": "POST",
+          "url": "http://localhost:9090/api/image10x10",
+          "httpVersion": "HTTP/1.1",
+          "headers": [],
+          "queryString": [],
+          "postData": {
+            "mimeType": "multipart/form-data",
+            "params": [
+              {
+                "name": "x",
+                "value": "0"
+              },
+              {
+                "name": "y",
+                "value": "0"
+              },
+              {
+                "name": "image",
+                "fileName": "image.png",
+                "contentType": "image/png"
+              }
+            ]
+          },
+          "headersSize": -1,
+          "bodySize": -1,
+          "cookies": []
+        }
+      }
+    ]
+  }
+}

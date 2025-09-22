@@ -1,0 +1,41 @@
+services:
+  valkey:
+    image: valkey/valkey:latest
+    command: valkey-server --port 6379 --requirepass ${VALKEY_PASSWORD} --appendonly yes --appendfsync everysec --save 900 1 --save 300 10 --save 60 10000 --io-threads ${IO_THREADS} --maxmemory ${VALKEY_MAX_MEMORY} --maxmemory-policy allkeys-lru
+    volumes:
+      - valkey-data:/data
+    restart: always
+    ports:
+      - "6379:6379"
+    networks:
+      - rplace-net
+    healthcheck:
+      test: ["CMD", "valkey-cli", "-a", "${VALKEY_PASSWORD}", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  insight:
+    image: redis/redisinsight:latest
+    container_name: valkey_gui
+    ports:
+      - "5540:5540"
+    restart: always
+    depends_on:
+      valkey:
+        condition: service_healthy
+    networks:
+      - rplace-net
+    volumes:
+      - insight-storage:/data
+
+volumes:
+  valkey-data:
+    driver: local
+  insight-storage:
+    driver: local
+
+networks:
+  rplace-net:
+    driver: bridge

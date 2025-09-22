@@ -68,8 +68,8 @@ func NewRouter() *chi.Mux {
 	r.Route("/api", func(r chi.Router) {
 		// Create a group of *rate limited* endpoints, this will be our api endpoints :)
 		r.Group(func(r chi.Router) {
-			r.Use(httprate.LimitByIP(10, time.Minute)) // Limit to 10 requests per miniute within this group
-			// Set a single pixel
+			r.Use(httprate.LimitByIP(1, time.Minute)) // Limit to 1 request per minute for image uploads
+			r.Post("/image10x10", canvas.Set10x10Image)
 		})
 		// Move to not this lol
 		r.Post("/pixels", canvas.SetCanvas)
