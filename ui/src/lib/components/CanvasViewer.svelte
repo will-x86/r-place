@@ -22,8 +22,15 @@
 		if (!ctx) return;
 
 		const rect = canvasElement.getBoundingClientRect();
-		const x = Math.floor(event.clientX - rect.left);
-		const y = Math.floor(event.clientY - rect.top);
+		
+		const clickX = event.clientX - rect.left;
+		const clickY = event.clientY - rect.top;
+		
+		const scaleX = canvasElement.width / rect.width;
+		const scaleY = canvasElement.height / rect.height;
+		
+		const x = Math.floor(clickX * scaleX);
+		const y = Math.floor(clickY * scaleY);
 
 		try {
 			const pixel = ctx.getImageData(x, y, 1, 1).data;
@@ -38,10 +45,7 @@
 				rgb: { r, g, b }
 			});
 		} catch (e) {
-			console.error(
-				'Could not get pixel data. Prolly cors',
-				e
-			);
+			console.error('Could not get pixel data. Probably a CORS issue.', e);
 		}
 	}
 
@@ -52,7 +56,7 @@
 		const refreshCanvas = () => {
 			const img = new Image();
 			img.crossOrigin = 'Anonymous';
-			img.src = (import.meta.env.VITE_API_URL||'') + `/api/canvas?t=${Date.now()}`;
+			img.src = (import.meta.env.VITE_API_URL || '') + `/api/canvas?t=${Date.now()}`;
 
 			img.onload = () => {
 				const hasSizeChanged =
@@ -71,7 +75,6 @@
 		refreshCanvas();
 		intervalId = setInterval(refreshCanvas, 2000);
 
-		// add the click listener if inspector is enabled
 		if (browser && inspectorEnabled) {
 			canvasElement.addEventListener('click', handleCanvasClick);
 		}
@@ -88,10 +91,18 @@
 <canvas bind:this={canvasElement} class:inspector-enabled={inspectorEnabled}></canvas>
 
 <style>
-	canvas {
+
+canvas {
 		border: 1px solid #333;
 		background-color: #f0f0f0;
 		display: block;
+
+		width: 100%;
+		height: auto; 
+
+		image-rendering: pixelated;
+		image-rendering: -moz-crisp-edges;
+		image-rendering: crisp-edges;
 	}
 	.inspector-enabled {
 		cursor: pointer;

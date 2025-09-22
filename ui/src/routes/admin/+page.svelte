@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { onMount} from 'svelte';
-	import { browser } from '$app/environment'; 
+	import { onMount } from 'svelte';
+	import { browser } from '$app/environment';
 	import CanvasViewer from '$lib/components/CanvasViewer.svelte';
 	import AdminPanel from '$lib/components/AdminPanel.svelte';
 
@@ -19,12 +19,27 @@
 		height: Math.abs(endY - startY)
 	};
 
-	$: selectionCoords = {
-		x1: Math.floor(startX),
-		y1: Math.floor(startY),
-		x2: Math.floor(endX),
-		y2: Math.floor(endY)
-	};
+	$: selectionCanvasCoords = (() => {
+		if (!canvasElement) {
+			return { x1: 0, y1: 0, x2: 0, y2: 0 };
+		}
+		const rect = canvasElement.getBoundingClientRect();
+
+		if (rect.width === 0 || rect.height === 0) {
+			return { x1: 0, y1: 0, x2: 0, y2: 0 };
+		}
+
+		const scaleX = canvasElement.width / rect.width;
+		const scaleY = canvasElement.height / rect.height;
+
+		return {
+			x1: Math.floor(startX * scaleX),
+			y1: Math.floor(startY * scaleY),
+			x2: Math.floor(endX * scaleX),
+			y2: Math.floor(endY * scaleY)
+		};
+	})();
+
 
 	const handleMouseDown = (e: MouseEvent) => {
 		const rect = canvasElement.getBoundingClientRect();
@@ -69,8 +84,6 @@
 			}
 		};
 	});
-
-
 </script>
 
 <main>
@@ -87,7 +100,7 @@
 		{/if}
 	</div>
 
-	<AdminPanel selection={selectionCoords} on:deleted={onSectionDeleted} />
+	<AdminPanel selection={selectionCanvasCoords} on:deleted={onSectionDeleted} />
 </main>
 
 <style>
@@ -102,7 +115,16 @@
 	.canvas-wrapper {
 		position: relative;
 		cursor: crosshair;
+
+		width: 40vw; 
+        max-width: 1000px; 
 	}
+
+    .canvas-wrapper :global(canvas) {
+        display: block; 
+        width: 100%; 
+        height: auto;
+    }
 
 	.selection-box {
 		position: absolute;

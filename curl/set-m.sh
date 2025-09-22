@@ -5,9 +5,9 @@ if [ -z "$1" ]; then
   exit 1
 fi
 
-API_URL="https://place.willx86.com/api/pixels"
+API_URL="http://localhost:9090/api/pixels"
 IMAGE_FILE="$1"
-SIZE="500x500"
+SIZE="100x100"
 
 convert "$IMAGE_FILE" -resize $SIZE\! txt:- | \
 sed -n 's/^\([0-9]*\),\([0-9]*\):.*\(#[0-9a-fA-F]\{6\}\).*/\1 \2 \3/p' | \
@@ -19,3 +19,4 @@ while read -r x y hex; do
 done
 
 wait
+

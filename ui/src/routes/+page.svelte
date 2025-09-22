@@ -32,11 +32,14 @@
 </main>
 
 <style>
-	main {
+main {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		gap: 1.5rem;
 		padding: 1rem;
+
+		width: 40%;
+		margin: 0 auto; 
 	}
 </style>
