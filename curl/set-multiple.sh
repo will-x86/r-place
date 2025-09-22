@@ -7,7 +7,7 @@ fi
 
 API_URL="http://localhost:9090/api/pixels"
 IMAGE_FILE="$1"
-SIZE="1000x1000"
+SIZE="500x500"
 
 convert "$IMAGE_FILE" -resize $SIZE\! txt:- | \
 sed -n 's/^\([0-9]*\),\([0-9]*\):.*\(#[0-9a-fA-F]\{6\}\).*/\1 \2 \3/p' | \

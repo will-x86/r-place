@@ -2,11 +2,10 @@
 	import { createEventDispatcher } from 'svelte';
 
 	export let selection: { x1: number; y1: number; x2: number; y2: number };
-
 	const dispatch = createEventDispatcher();
 
 	let apiKey = '';
-	let statusMessage = 'Enter API key and drag on canvas to select a section.';
+	let statusMessage = 'Drag on the canvas above to select a section.';
 
 	$: hasSelection = selection.x1 !== selection.x2 || selection.y1 !== selection.y2;
 
@@ -20,7 +19,7 @@
 			return;
 		}
 
-		statusMessage = 'Deleting section...';
+		statusMessage = `Deleting section...`;
 		try {
 			const res = await fetch(import.meta.env.VITE_API_URL + '/api/admin/section', {
 				method: 'DELETE',
@@ -40,7 +39,7 @@
 			if (!res.ok) throw new Error(`Server error: ${res.statusText || res.status}`);
 
 			statusMessage = 'Section cleared successfully.';
-			dispatch('deleted');
+			dispatch('deleted'); // Notify parent that deletion was successful
 		} catch (error) {
 			statusMessage = `Error: ${error instanceof Error ? error.message : 'Unknown error'}`;
 		}
@@ -48,7 +47,7 @@
 </script>
 
 <div class="admin-panel">
-	<h3>Admin Panel</h3>
+	<h3>Admin Controls</h3>
 	<div class="controls">
 		<input type="password" placeholder="API Key" bind:value={apiKey} />
 		<button on:click={deleteSection} disabled={!hasSelection}>Delete Section</button>
@@ -64,9 +63,13 @@
 		flex-direction: column;
 		gap: 0.5rem;
 		width: 500px;
+		max-width: 90vw;
 	}
 	.controls {
 		display: flex;
 		gap: 0.5rem;
+	}
+	p {
+		min-height: 1.2em; 
 	}
 </style>
