@@ -1,4 +1,3 @@
----
 services:
   valkey:
     image: valkey/valkey:latest
@@ -7,22 +6,59 @@ services:
       - valkey-data:/data
     restart: always
     ports:
-      - 6379:6379
-    # network_mode: host
-    networks: [valkey-net]
+      - "6379:6379"
+    networks:
+      - rplace-net
+    healthcheck:
+      test: ["CMD", "valkey-cli", "-a", "${VALKEY_PASSWORD}", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
   insight:
     image: redis/redisinsight:latest
     container_name: valkey_gui
-    ports: [5540:5540]
+    ports:
+      - "5540:5540"
     restart: always
     depends_on:
-      - valkey # Ensures Valkey starts before the GUI
-    networks: [valkey-net]
-    volumes: [insight-storage:/data]
+      valkey:
+        condition: service_healthy
+    networks:
+      - rplace-net
+    volumes:
+      - insight-storage:/data
+
+  rplace-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "9090:9090"
+    environment:
+      - APP_ENV=${APP_ENV}
+      - PORT=${PORT}
+      - VALKEY_PASSWORD=${VALKEY_PASSWORD}
+      - VALKEY_HOST=valkey:6379
+      - X_MAX=${X_MAX}
+      - Y_MAX=${Y_MAX}
+      - IO_THREADS=${IO_THREADS}
+      - VALKEY_MAX_MEMORY=${VALKEY_MAX_MEMORY}
+      - MASTER_API_KEY=${MASTER_API_KEY}
+    depends_on:
+      valkey:
+        condition: service_healthy
+    networks:
+      - rplace-net
+    restart: always
+
 volumes:
   valkey-data:
     driver: local
   insight-storage:
+    driver: local
+
 networks:
-  valkey-net:
+  rplace-net:
     driver: bridge
