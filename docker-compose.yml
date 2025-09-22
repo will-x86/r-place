@@ -46,6 +46,7 @@ services:
       - IO_THREADS=${IO_THREADS}
       - VALKEY_MAX_MEMORY=${VALKEY_MAX_MEMORY}
       - MASTER_API_KEY=${MASTER_API_KEY}
+      - VITE_API_URL=${VITE_API_URl}
     depends_on:
       valkey:
         condition: service_healthy
