@@ -1,4 +1,11 @@
 services:
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    command: tunnel run
+    environment: ["TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}"]
+    networks: [rplace-net]
+
   valkey:
     image: valkey/valkey:latest
     command: valkey-server --port 6379 --requirepass ${VALKEY_PASSWORD} --appendonly yes --appendfsync everysec --save 900 1 --save 300 10 --save 60 10000 --io-threads ${IO_THREADS} --maxmemory ${VALKEY_MAX_MEMORY} --maxmemory-policy allkeys-lru
