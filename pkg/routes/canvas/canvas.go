@@ -101,6 +101,11 @@ func SetCanvasQuery(w http.ResponseWriter, r *http.Request) {
 		return
 
 	}
+	_, err = cache.ParseHexColor(hex)
+	if err != nil {
+		helper.ReturnJsonError(w, fmt.Errorf("Error parsing hex %w", err), http.StatusInternalServerError)
+		return
+	}
 
 	c := models.Canvas{
 		X:   x,
@@ -130,6 +135,11 @@ func SetCanvas(w http.ResponseWriter, r *http.Request) {
 	}
 	if err := vk.SetCanvasValue(r.Context(), c); err != nil {
 		helper.ReturnJsonError(w, fmt.Errorf("Error setting database %w", err), http.StatusInternalServerError)
+		return
+	}
+	_, err := cache.ParseHexColor(c.Hex)
+	if err != nil {
+		helper.ReturnJsonError(w, fmt.Errorf("Error parsing hex %w", err), http.StatusInternalServerError)
 		return
 	}
 	cache.SetColor(c.X, c.Y, c.Hex)
