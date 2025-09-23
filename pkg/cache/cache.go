@@ -136,8 +136,10 @@ func InitialCache() error {
 		go func() {
 			defer wg.Done()
 			for j := range jobs {
-				if len(errs) > 0 {
+				select {
+				case <-errs:
 					return
+				default:
 				}
 
 				hex, err := vk.GetSingleCanvasValue(context.Background(), models.Canvas{
@@ -154,14 +156,13 @@ func InitialCache() error {
 					}
 					hex = "#FFFFFF"
 				}
+
 				col, err := ParseHexColor(hex)
 				if err != nil {
-					select {
-					case errs <- err:
-					default:
-					}
-					return
+					log.Printf("Invalid hex color '%s' at position (%d, %d), using white: %v", hex, j.x, j.y, err)
+					col = color.RGBA{255, 255, 255, 255}
 				}
+
 				can.mutex.Lock()
 				can.img.Set(j.x, j.y, col)
 				can.mutex.Unlock()
@@ -177,10 +178,11 @@ func InitialCache() error {
 	close(jobs)
 
 	wg.Wait()
-	close(errs)
 
-	if err := <-errs; err != nil {
+	select {
+	case err := <-errs:
 		return err
+	default:
 	}
 
 	can.mutex.Lock()
