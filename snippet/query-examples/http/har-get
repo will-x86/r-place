@@ -1,0 +1,6 @@
+GET /api/pixelsq?x=1&y=2&hex=%23102932 HTTP/1.1
+User-Agent: curl/7.68.0
+Accept: */*
+Host: will-x86.com
+
+

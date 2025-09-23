@@ -29,7 +29,9 @@
             gopkgs
             godef
             golint
-            air # Hot reloading with golang woot woot 
+            air # Hot reloading with golang woot woot
+            python312Packages.requests
+            python312Packages.pillow
           ];
 
           shellHook = ''

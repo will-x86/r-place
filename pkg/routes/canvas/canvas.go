@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/valkey-io/valkey-go"
 	"github.com/will-x86/r-place/pkg/cache"
@@ -95,6 +96,11 @@ func SetCanvasQuery(w http.ResponseWriter, r *http.Request) {
 	}
 
 	hex := query.Get("hex")
+	if hex == "" || !strings.Contains(hex, "#") {
+		helper.ReturnJsonError(w, fmt.Errorf("Invalid hex :%s", hex), http.StatusBadRequest)
+		return
+
+	}
 
 	c := models.Canvas{
 		X:   x,

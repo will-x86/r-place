@@ -87,7 +87,7 @@
 </script>
 
 <main>
-	<h1>r/place Admin</h1>
+	<h1>pal/place Admin</h1>
 
 	<div class="canvas-wrapper">
 		<CanvasViewer bind:canvasElement />

@@ -20,7 +20,7 @@
 </script>
 
 <main>
-	<h1>r/place Viewer</h1>
+	<h1>pal/place Viewer</h1>
 
 	<CanvasViewer
 		inspectorEnabled={true}

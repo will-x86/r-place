@@ -1,3 +1,69 @@
+# Examples 
+
+Set a single pixel :) 
+
+```python
+import requests
+
+payload = {"x": "0", "y": "0", "hex": "#FF69B4"}
+r = requests.get("https://will-x86.com/api/pixelsq", params=payload)
+print(r.text)
+```
+
+Set a single pixel (json)
+
+```python
+import requests
+
+r = requests.post(
+    "https://will-x86.com/api/pixels", json={"x": 0, "y": 0, "hex": "#FFFFFF"}
+)
+print(r.text)
+```
+
+
+
+Draw a square ! 
+```python
+import requests
+
+
+# Function to set a pixel
+def set_pixel(x, y, color):
+    r = requests.post(
+        "https://will-x86.com/api/pixels", json={"x": x, "y": y, "hex": color}
+    )
+    print(r.text)
+
+
+color = "#FF0000"
+for x in range(5, 10):
+    for y in range(5, 10):
+        set_pixel(x, y, color)
+
+```
+
+
+Print an image :) 
+```python 
+import requests
+from PIL import Image
+
+image = Image.open("image.png")
+print(f"Original size : {image.size}")  
+
+image_resized = image.resize((10, 10))
+image_resized.save("image-resized.png")
+
+
+files = {"image": open("image-resized.png", "rb")}
+data = {"x": "0", "y": "0"}
+
+response = requests.post("https://will-x86.com/api/image10x10", files=files, data=data)
+
+print(response.text)
+```
+
 This is the code for an r-place clone that can only be used via code:)
 
 Elements:

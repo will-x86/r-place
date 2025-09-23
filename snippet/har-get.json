@@ -1,0 +1,33 @@
+{
+  "method": "GET",
+  "url": "https://will-x86.com/api/pixelsq?x=1&y=2&hex=%23102932",
+  "httpVersion": "HTTP/1.1",
+  "headers": [
+    {
+      "name": "User-Agent",
+      "value": "curl/7.68.0"
+    },
+    {
+      "name": "Accept",
+      "value": "*/*"
+    }
+  ],
+  "queryString": [
+    {
+      "name": "x",
+      "value": "1"
+    },
+    {
+      "name": "y",
+      "value": "2"
+    },
+    {
+      "name": "hex",
+      "value": "#102932"
+    }
+  ],
+  "postData": null,
+  "headersSize": -1,
+  "bodySize": 0,
+  "cookies": []
+}
