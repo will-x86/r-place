@@ -2,7 +2,7 @@ open Cohttp_lwt_unix
 open Cohttp
 open Lwt
 
-let uri = Uri.of_string "https://place.willx86.com/api/pixels" in
+let uri = Uri.of_string "https://will-x86.com/api/pixels" in
 let headers = Header.add_list (Header.init ()) [
   ("Content-Type", "application/json");
   ("User-Agent", "curl/7.68.0");

@@ -3,7 +3,7 @@
 $curl = curl_init();
 
 curl_setopt_array($curl, [
-  CURLOPT_URL => "https://place.willx86.com/api/pixels",
+  CURLOPT_URL => "https://will-x86.com/api/pixels",
   CURLOPT_RETURNTRANSFER => true,
   CURLOPT_ENCODING => "",
   CURLOPT_MAXREDIRS => 10,

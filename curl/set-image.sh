@@ -7,7 +7,7 @@ fi
 IMAGE_FILE="$1"
 X="$2"
 Y="$3"
-API_URL="http://localhost:9090/api/image10x10"
+API_URL="https://will-x86.com/api/image10x10"
 
 convert "$IMAGE_FILE" -resize 10x10\! "$IMAGE_FILE.tmp.png"
 

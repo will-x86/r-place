@@ -1,6 +1,6 @@
 import http.client
 
-conn = http.client.HTTPSConnection("place.willx86.com")
+conn = http.client.HTTPSConnection("will-x86.com")
 
 payload = "{\"x\":1, \"y\":2, \"hex\":\"#102932\"}"
 

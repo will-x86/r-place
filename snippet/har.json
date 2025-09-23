@@ -1,6 +1,6 @@
 {
   "method": "POST",
-  "url": "https://place.willx86.com/api/pixels",
+  "url": "https://will-x86.com/api/pixels",
   "httpVersion": "HTTP/1.1",
   "headers": [
     {

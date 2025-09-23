@@ -1,6 +1,6 @@
 library(httr)
 
-url <- "https://place.willx86.com/api/pixels"
+url <- "https://will-x86.com/api/pixels"
 
 payload <- "{\"x\":1, \"y\":2, \"hex\":\"#102932\"}"
 

@@ -69,6 +69,52 @@ func GetCanvas(w http.ResponseWriter, r *http.Request) {
 	w.Write(png)
 }
 
+// Set a value on the canvas query params
+func SetCanvasQuery(w http.ResponseWriter, r *http.Request) {
+	query := r.URL.Query()
+	xStr := query.Get("x")
+	if xStr == "" {
+		helper.ReturnJsonError(w, fmt.Errorf("missing required parameter 'x'"), http.StatusBadRequest)
+		return
+	}
+	x, err := strconv.Atoi(xStr)
+	if err != nil {
+		helper.ReturnJsonError(w, fmt.Errorf("invalid 'x' parameter: must be an integer"), http.StatusBadRequest)
+		return
+	}
+
+	yStr := query.Get("y")
+	if yStr == "" {
+		helper.ReturnJsonError(w, fmt.Errorf("missing required parameter 'y'"), http.StatusBadRequest)
+		return
+	}
+	y, err := strconv.Atoi(yStr)
+	if err != nil {
+		helper.ReturnJsonError(w, fmt.Errorf("invalid 'y' parameter: must be an integer"), http.StatusBadRequest)
+		return
+	}
+
+	hex := query.Get("hex")
+
+	c := models.Canvas{
+		X:   x,
+		Y:   y,
+		Hex: hex,
+	}
+
+	if err := vk.SetCanvasValue(r.Context(), c); err != nil {
+		helper.ReturnJsonError(w, fmt.Errorf("Error setting database %w", err), http.StatusInternalServerError)
+		return
+	}
+
+	cache.SetColor(c.X, c.Y, c.Hex)
+
+	response, _ := json.Marshal(map[string]any{"ok": "ok"})
+	w.WriteHeader(http.StatusOK)
+	w.Write(response)
+	log.Printf("Successfully wrote to co-ords X:%d , Y:%d with hex %s\n", c.X, c.Y, c.Hex)
+}
+
 // Set a value on the canvas
 func SetCanvas(w http.ResponseWriter, r *http.Request) {
 	var c models.Canvas

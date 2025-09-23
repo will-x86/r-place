@@ -13,7 +13,7 @@ let parameters = [
 
 let postData = JSONSerialization.data(withJSONObject: parameters, options: [])
 
-let request = NSMutableURLRequest(url: NSURL(string: "https://place.willx86.com/api/pixels")! as URL,
+let request = NSMutableURLRequest(url: NSURL(string: "https://will-x86.com/api/pixels")! as URL,
                                         cachePolicy: .useProtocolCachePolicy,
                                     timeoutInterval: 10.0)
 request.httpMethod = "POST"

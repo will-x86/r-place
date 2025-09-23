@@ -13,7 +13,7 @@ xhr.addEventListener("readystatechange", function () {
   }
 });
 
-xhr.open("POST", "https://place.willx86.com/api/pixels");
+xhr.open("POST", "https://will-x86.com/api/pixels");
 xhr.setRequestHeader("Content-Type", "application/json");
 xhr.setRequestHeader("User-Agent", "curl/7.68.0");
 xhr.setRequestHeader("Accept", "*/*");

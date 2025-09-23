@@ -1,4 +1,4 @@
-var client = new RestClient("https://place.willx86.com/api/pixels");
+var client = new RestClient("https://will-x86.com/api/pixels");
 var request = new RestRequest(Method.POST);
 request.AddHeader("Content-Type", "application/json");
 request.AddHeader("User-Agent", "curl/7.68.0");

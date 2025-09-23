@@ -2,7 +2,7 @@ const http = require("https");
 
 const options = {
   "method": "POST",
-  "hostname": "place.willx86.com",
+  "hostname": "will-x86.com",
   "port": null,
   "path": "/api/pixels",
   "headers": {

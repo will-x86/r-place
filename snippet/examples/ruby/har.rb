@@ -2,7 +2,7 @@ require 'uri'
 require 'net/http'
 require 'openssl'
 
-url = URI("https://place.willx86.com/api/pixels")
+url = URI("https://will-x86.com/api/pixels")
 
 http = Net::HTTP.new(url.host, url.port)
 http.use_ssl = true
