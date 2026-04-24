@@ -18,7 +18,9 @@ func init() {
 	if err := helper.RequiredEnv(); err != nil {
 		panic(err)
 	}
-	vk.InitialiseValkey()
+	if err := vk.InitialiseValkey(); err != nil {
+		panic(err)
+	}
 	if err := helper.SetMaxXY(); err != nil {
 		panic(err)
 	}
