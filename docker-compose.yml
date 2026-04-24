@@ -12,8 +12,8 @@ services:
     volumes:
       - valkey-data:/data
     restart: always
-    ports:
-      - "6380:6379"
+    #ports:
+      #- "6380:6379"
     networks:
       - rplace-net
     healthcheck:
@@ -47,7 +47,7 @@ services:
       - APP_ENV=${APP_ENV}
       - PORT=${PORT}
       - VALKEY_PASSWORD=${VALKEY_PASSWORD}
-      - VALKEY_HOST=valkey:6380
+      - VALKEY_HOST=valkey:6379
       - X_MAX=${X_MAX}
       - Y_MAX=${Y_MAX}
       - IO_THREADS=${IO_THREADS}
