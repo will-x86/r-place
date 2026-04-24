@@ -269,8 +269,10 @@ func Set10x10Image(w http.ResponseWriter, req *http.Request) {
 	}
 
 	pixelsSet := 0
-	for py := 0; py < 10; py++ {
-		for px := 0; px < 10; px++ {
+	for py := range 10 {
+		//for py := 0; py < 10; py++ {
+		for px := range 10 {
+			//for px := 0; px < 10; px++ {
 			canvasX := x + px
 			canvasY := y + py
 

@@ -66,17 +66,17 @@ func NewRouter() *chi.Mux {
 	r.Use(middleware.Logger) // Built in logger middleware
 	// All /api routes go within this block
 	r.Route("/api", func(r chi.Router) {
-		// Create a group of *rate limited* endpoints, this will be our api endpoints :)
+		// Create a group of 1 per min limited endpoints
 		r.Group(func(r chi.Router) {
 			r.Use(httprate.LimitByIP(1, time.Minute)) // Limit to 1 request per minute for image uploads
 			r.Post("/image10x10", canvas.Set10x10Image)
 		})
 		r.Group(func(r chi.Router) {
-			r.Use(httprate.LimitByIP(60, time.Minute)) // Limit to 1 request per minute for image uploads
+			// See the fun part here ?
+			r.Use(httprate.LimitByIP(60, time.Minute))
 			r.Post("/pixels", canvas.SetCanvas)
 			r.Get("/pixelsq", canvas.SetCanvasQuery)
 		})
-		// Move to not this lol
 		r.Get("/canvas", canvas.GetCanvas)
 		r.Post("/pixel", canvas.GetSingle)
 		r.Route("/admin", func(r chi.Router) {

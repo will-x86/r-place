@@ -23,19 +23,19 @@ services:
       retries: 3
       start_period: 30s
 
-  insight:
-    image: redis/redisinsight:latest
-    container_name: valkey_gui
-    ports:
-      - "5540:5540"
-    restart: always
-    depends_on:
-      valkey:
-        condition: service_healthy
-    networks:
-      - rplace-net
-    volumes:
-      - insight-storage:/data
+#  insight:
+#    image: redis/redisinsight:latest
+#    container_name: valkey_gui
+#    ports:
+#      - "5540:5540"
+#    restart: always
+#    depends_on:
+#      valkey:
+#        condition: service_healthy
+#    networks:
+#      - rplace-net
+#    volumes:
+#      - insight-storage:/data
 
   rplace-app:
     build:
@@ -64,8 +64,8 @@ services:
 volumes:
   valkey-data:
     driver: local
-  insight-storage:
-    driver: local
+  #insight-storage:
+    #driver: local
 
 networks:
   rplace-net:
